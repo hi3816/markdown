@@ -1,0 +1,258 @@
+################
+#vagrant 사용명령어#
+################
+
+vagrant init        // 초기화 (설정파일생성)
+vagrant up         // vm(리눅스) 켬
+vagrant reload    // vm 재부팅
+vagrant halt       // vm 끔
+vagrant destory   // vm 삭제
+vagrant ssh        // vm 에 접속
+
+
+
+########
+#디렉토리#
+########
+
+pwd : 현재 위치한 디렉토리의 경로를 출력
+
+cd
+  cd [디렉토리]   : 디렉토리를 이동할 때 사용
+  cd ..              : 상위 디렉토리로 이동
+  cd ~             : 최상위 디렉토리로 이동
+
+ls
+  ls                 : 파일의 목록을 간단히 출력
+  ls -al             : 파일의 목록을 자세하게 출력
+  ls -clt            : 파일의 목록을 생성된 시간이 포함되서 자세하게 출력  
+  ls -ult            : 파일의 목록을 수정된 시간이 포함되서 자세하게 출력
+
+mkdir [디렉토리] : 디렉토리를 생성
+rmdir [디렉토리] : 빈 디렉토리를 삭제
+
+
+
+
+########
+##파 일##
+########
+cat [파일] : 파일의 내용을 출력
+tac [파일] : 파일의 내용을 뒤집어서 출력
+cp [원본] [사본] : 파일을 복사
+mv [원본] [목적지] : 파일을 이동한다. 이것을 응용해 파일명도 바꿀수 있다.
+
+rm [파일]
+  rm [파일] : 파일을 삭제
+  rm -rf [파일] : 삭제 동의를 묻지 않고, 파일은 그냥 지우고 디렉리면 하위경로 파일까지 모두 삭제
+
+> : 파일 저장
+>> : 꼬리에 내용 추가하여 저장
+
+nl      
+   nl [파일명]   : 넘버리스트 보여주기
+   nl -w [파일명]  : 앞쪽 띄어쓰기 폭조절
+   nl -i [파일명]  : 행번호가 몇개씩증가한 지정해주는옵션 
+
+head
+   head [파일] : 앞쪽 내용만 보기
+   head -n5 [파일] : 5줄만 앞쪽에서 보기
+tail
+    tail [파일] : 뒤쪽 내용만 보기
+    tail -n5 [파일] : 뒤에 5줄만 보기
+
+wc -l [파일] : 몇행짜린지,  파일명
+
+split
+   split [파일] : 파일 쪼개기
+   split -d  [파일]                                  : 파일명을 정수형으로 변경
+   split --additional-suffix= [파일]              : 확장자명
+   split --additional-suffix= buckup_ [파일]   : 접두어 (머리에 붙임)  
+   split -C  [파일]                                  : 용량 기준
+   split -n  [파일]                                  : 갯수 기준
+   split -l   [파일]                                 : 몇줄인가기준
+
+
+#########
+##사용자##
+#########
+
+sudo su - : root 유저로 강제로 변경
+sudo passwd : root 유저 비밀번호 변경
+su - : 설정한 비밀번호 입력하고 root유저로 변경
+
+useradd [유저명]                      :  유저생성
+userdel [유저명]                       :  삭제
+
+su - 만든유저명                        : 유저변경
+
+groupadd  [그룹명]                   : 그룹 생성
+groupmod [그룹명]                   : 그룹 수정
+groupdel   [그룹명]                   : 그룹 삭제
+gpasswd   [그룹명]                   : 그룹비밀번호변경
+* gpasswd -a [유저명] [그룹명]     : 그룹에 유저를 추가
+
+권한 읽는방법 (rwx)                   : 권한(rwx)에 대해 숫자로변경
+chmod [수정할권한번호] [target]   : 권한 변경
+chown 유저명:그룹명 대상파일     : 소유권 변경
+chgrp                                   : 그룹 변경 
+
+
+
+########
+##기 타##
+########
+* : ~를 포함한
+history : 사용한 명령어 이력 출력
+alias [만들명령어] [기존명령어] : 명령어를 만듬
+alias lh='lh = ls –Alh'
+
+who : 누가 접속했는지 출력
+ctrl + l : 화면 깨끗하게 
+clear : 화면 깨끗하게 
+
+
+============================
+포트포워딩 및 VM 셋팅
+
+## 리눅스 vm
+
+cd /etc/sysconfig/network-scripts
+vi ifconfg-enp0s3
+```
+밑에쪽에
+onboot = yes로변경
+```
+
+리눅스 재기동(껏다키세요)
+
+yum install net-tools -y
+yum install openssh-server -y
+yum install openssh-client -y
+yum install update -y
+
+
+###########
+#포트 포워딩#
+###########
+
+## 윈도우
+ifconfig  // IP 확인
+
+이더넷 어댑터 VirtualBox Host-Only Network:
+   연결별 DNS 접미사. . . . :
+   링크-로컬 IPv6 주소 . . . . : fe80::ad03:35ed:4ba3:9e5b%22
+   IPv4 주소 . . . . . . . . . : 192.168.56.1
+   서브넷 마스크 . . . . . . . : 255.255.255.0
+   기본 게이트웨이 . . . . . . :
+
+## 리눅스
+ip addr // IP확인 (enp0s3)
+
+설정 -> 네트워크 -> 어댑터1 (다음에연결을 NAT 로변경) -> 고급클릭 -> 포트 포워딩
+ssh | TCP | 192.168.56.1 | 22 | 10.0.2.15 | 22
+http | TCP |                | 80 | 10.0.2.15 | 80
+
+
+// 80 포트 열어주기
+firewall-cmd --add-port=80/tcp --zone=public --permanent
+
+
+==================================================================
+터미널 (tera term으로 접속)
+HOST  :  192.168.56.1 입력후
+리눅스 설치시 등록한 root || 유저 로 접속
+
+
+==================================================================
+########
+#openssl#
+########
+yum install wget -y
+yum install perl gcc -y
+
+cd /usr/local/src
+wget https://www.openssl.org/source/openssl-1.1.1l.tar.gz --no-check-certificate
+tar -xvzf openssl-1.1.1l.tar.gz
+cd openssl-1.1.1l
+./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared
+make && make install
+
+
+
+
+vi /etc/ld.so.conf.d/openssl-1.1.1l.conf
+```
+/usr/local/ssl/lib
+```
+ldconfig -v
+
+ln -s /usr/local/ssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
+ln -s /usr/local/ssl/lib/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
+
+
+
+mv /usr/bin/openssl /usr/bin/openssl1.0.2
+ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
+
+openssl version
+
+
+
+#######
+#apache#
+#######
+yum install gcc-c++ -y
+yum install expat-devel -y
+
+// sudo yum install -y expat expat-devel expat-static
+
+
+mkdir -p /usr/local/src/apache
+cd /usr/local/src/apache
+wget http://ftp.cs.stanford.edu/pub/exim/pcre/pcre-8.45.tar.gz --no-check-certificate
+tar -xvzf pcre-8.45.tar.gz
+cd pcre-8.45
+./configure
+make && make install
+
+cd ../
+
+wget https://dlcdn.apache.org/httpd/httpd-2.4.54.tar.gz --no-check-certificate
+wget http://apache.mirror.cdnetworks.com/apr/apr-1.6.5.tar.gz
+wget http://apache.mirror.cdnetworks.com/apr/apr-util-1.6.1.tar.gz
+
+
+tar -xvzf httpd-2.4.54.tar.gz
+tar -xvzf apr-1.6.5.tar.gz
+tar -xvzf apr-util-1.6.1.tar.gz
+
+mv apr-1.6.5 httpd-2.4.54/srclib/apr
+mv apr-util-1.6.1 httpd-2.4.54/srclib/apr-util
+
+
+cd httpd-2.4.54
+./configure --prefix=/usr/local/src/apache --enable-so --enable-ssl=shared --with-ssl=/usr/local/ssl --enable-rewrite
+make && make install
+
+
+vi /usr/lib/systemd/system/httpd.service
+```
+[Unit]
+Description=The Apache HTTP Server
+
+ 
+[Service]
+Type=forking
+PIDFile=/usr/local/src/apache/logs/httpd.pid
+ExecStart=/usr/local/src/apache/bin/apachectl start
+ExecReload=/usr/local/src/apache/bin/apachectl graceful
+ExecStop=/usr/local/src/apache/bin/apachectl stop
+KillSignal=SIGCONT
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+systemctl start httpd
